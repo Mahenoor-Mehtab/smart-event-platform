@@ -1,6 +1,12 @@
+'use client'
+
+import { SignInButton,  UserButton } from '@clerk/nextjs'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
+import { Button } from './ui/button'
+import { Authenticated, Unauthenticated } from 'convex/react'
+import { BarLoader } from 'react-spinners'
 
 const Header = () => {
   return (
@@ -15,10 +21,28 @@ const Header = () => {
       {/* Search & Location - Desktop Only */}
 
       {/* Right Side Actions  */}
+      <div>
+        <Authenticated>
+                <UserButton />
+              </Authenticated>
+          <Unauthenticated>
+               <SignInButton mode='modal'>
+                <Button size='sm'>Sign In</Button>
+                 
+               </SignInButton>
+              </Unauthenticated>
+              {/* Show the user button when the user is signed in */}
+              
+      </div>
 
     </div>
 
     {/* Mobile Search & Location - Below Header */}
+
+    {/* Loading */}
+    <div className='absolute bottom-0 left-0 w-full'>
+      <BarLoader width={"100%"} color='#a855f7'/>
+    </div>
 
    </nav>
 

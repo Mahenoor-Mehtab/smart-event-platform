@@ -1,6 +1,9 @@
 import { ThemeProvider } from "@/components/theme-provider"
 import "./globals.css";
 import Header from "@/components/Header";
+import { ConvexClientProvider } from "./ConvexClientProvider";
+import { ClerkProvider } from "@clerk/nextjs";
+import { shadesOfPurple } from '@clerk/themes'
 
 
 export const metadata = {
@@ -10,6 +13,9 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
+    <ClerkProvider  appearance={{
+    theme: shadesOfPurple,
+  }}>
     <html lang="en" suppressHydrationWarning>
       <body
         className={`bg-linear-to-br from-gray-950 via-zinc-900 to-stone-900 text-white`}
@@ -20,6 +26,7 @@ export default function RootLayout({ children }) {
             enableSystem
             disableTransitionOnChange
           >
+                <ConvexClientProvider>
             {/* Header  */}
             <Header/>
             <main className="relative min-h-screen container pt-40 md:pt-32">
@@ -36,9 +43,11 @@ export default function RootLayout({ children }) {
           </div>        
          </footer>
       </main>
+      </ConvexClientProvider>
           </ThemeProvider>
       </body>
     </html>
+    </ClerkProvider>
   );
 }
 

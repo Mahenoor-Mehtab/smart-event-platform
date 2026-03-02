@@ -27,7 +27,7 @@ export const getFeaturedEvents = query({
 })
 
 //! Get events by location (city/state)
-export const getEventByLocation = query({
+export const getEventsByLocation = query({
     args:{
         city: v.optional(v.string()),
         state: v.optional(v.string()),
@@ -84,7 +84,7 @@ export const getPopularEvents = query({
 })
 
 //! Get event by category:
- export const getEventByCategory = query({
+ export const getEventsByCategory = query({
     args:{
         category: v.string(),
         limit:v.optional(v.number()),

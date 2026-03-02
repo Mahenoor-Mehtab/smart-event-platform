@@ -5,7 +5,7 @@ import { toast } from "sonner";
 
 export const useConvexQuery = (query , ...args)=>{
     const result = useQuery(query, ...args);
-    console.log("resiult:", result)
+    // console.log("result:", result)
 
     const [data , setData] = useState(undefined);
     const [isLoading , setIsLoading] = useState(true);

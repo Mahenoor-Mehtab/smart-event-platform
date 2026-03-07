@@ -10,19 +10,28 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import { toast } from "sonner";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useMemo, useState } from "react"
 import { Progress } from "./ui/progress"
-import { ArrowRight, Badge, Heart, MapPin } from "lucide-react"
+import { ArrowRight,  ArrowLeft , Heart, MapPin } from "lucide-react"
 import { CATEGORIES } from "@/lib/data"
 import { useConvexMutation } from "@/hooks/use-convex-query"
 import { api } from "@/convex/_generated/api"
-import { State } from "country-state-city"
+import { State ,  City} from "country-state-city"
+import { Badge } from "./ui/badge";
 
 export function OnboardingModal({isOpen , onClose , onComplete}) {
-   const [step , setStep] = useState(1);
-     const [selectedInterests, setSelectedInterests] = useState([]);
+  const [step , setStep] = useState(1);
+  const [selectedInterests, setSelectedInterests] = useState([]);
   const [location, setLocation] = useState({
     state: "",
     city: "",
@@ -90,9 +99,8 @@ export function OnboardingModal({isOpen , onClose , onComplete}) {
 
    const progress = (step / 2) * 100;
 
-
-   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+  return (
+    <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
           <div className="mb-4">
@@ -244,8 +252,9 @@ export function OnboardingModal({isOpen , onClose , onComplete}) {
             </Button>
           )}
           <Button
+           type="button"
             onClick={handleNext}
-            disabled={isLoading}
+           
             className="flex-1 gap-2"
           >
             {isLoading

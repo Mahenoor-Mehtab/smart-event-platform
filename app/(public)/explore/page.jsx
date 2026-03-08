@@ -75,6 +75,16 @@ export default function ExplorePage() {
     count: categoryCounts?.[cat.id] || 0,
   }));
 
+  const sortedCategories = [...categoriesWithCounts].sort((a, b) => {
+  const userInterests = currentUser?.interests || [];
+
+  const aSelected = userInterests.includes(a.id);
+  const bSelected = userInterests.includes(b.id);
+
+  if (aSelected === bSelected) return 0;
+  return aSelected ? -1 : 1;
+});
+
   // Loading state
   const isLoading = loadingFeatured || loadingLocal || loadingPopular;
 
@@ -204,7 +214,7 @@ export default function ExplorePage() {
         <h2 className="text-3xl font-bold mb-6">Browse by Category</h2>
 
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
-          {categoriesWithCounts.map((category) => (
+          {sortedCategories.map((category) => (
             <Card
               key={category.id}
               className="py-2 group cursor-pointer hover:shadow-lg transition-all hover:border-purple-500/50"

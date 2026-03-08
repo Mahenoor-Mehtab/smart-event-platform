@@ -1,10 +1,11 @@
 'use client'
 import EventCard from '@/components/event-card';
+import { Badge } from '@/components/ui/badge';
 import { api } from '@/convex/_generated/api';
 import { useConvexQuery } from '@/hooks/use-convex-query';
 import { CATEGORIES } from '@/lib/data';
 import { parseLocationSlug } from '@/lib/location-utils';
-import { Loader2 } from 'lucide-react';
+import { Loader2, MapPin } from 'lucide-react';
 import { notFound, useParams, useRouter } from 'next/navigation';
 import React from 'react'
 

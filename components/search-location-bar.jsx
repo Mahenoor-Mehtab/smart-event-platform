@@ -29,7 +29,6 @@ const SearchLocationBar = () => {
     const searchRef = useRef(null);
 
     const  {data: currentUser , isLoading} = useConvexQuery(api.users.getCurrentUser);
-    console.log("current user", currentUser)
     
     const {mutate:updateLocation} = useConvexMutation(
         api.users.completeOnboarding
@@ -46,7 +45,6 @@ const SearchLocationBar = () => {
         if(!state ) return [];
         return  City.getCitiesOfState("IN", state.isoCode);
     },[selectedState , indianStates])
-    console.log("city",cities);
 
     useEffect(()=>{
         if(currentUser?.location){
@@ -55,8 +53,6 @@ const SearchLocationBar = () => {
             setSelectedCity(currentUser.location.city || "")
         }
 
-         console.log("state:", currentUser?.location.state);
-  console.log("city:", currentUser?.location.city);
     }, [currentUser])
 
     const debouncedSetQuery = useRef(

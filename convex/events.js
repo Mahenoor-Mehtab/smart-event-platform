@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
-import { mutation } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 
 export const createEvent = mutation({
       args: {
@@ -24,28 +24,28 @@ export const createEvent = mutation({
     ticketPrice: v.optional(v.number()),
     coverImage: v.optional(v.string()),
     themeColor: v.optional(v.string()),
-    hasPro: v.optional(v.boolean()),
+    // hasPro: v.optional(v.boolean()),
   },
 
-  handle: async(ctx , args)=>{
+  handler: async(ctx , args)=>{
     try{
         const user = await ctx.runQuery(internal.users.getCurrentUser);
 
         // SERVER-SIDE CHECK: Verify event limit for Free users
-        if(!hasPro && user.freeEventsCreated >= 1){
-            throw new Error(
-                "Free event limit reached. Please upgrade to Pro to craete more events"
-            )
-        }
+        // if(!args.hasPro && user.freeEventsCreated >= 1){
+        //     throw new Error(
+        //         "Free event limit reached. Please upgrade to Pro to craete more events"
+        //     )
+        // }
 
         const defaultColor = "#1e3e8a";
-        if(!hasPro && args.themeColor && args.themeColor !== defaultColor){
-            throw new Error(
-                "Custom theme colors are a Pro features, Please upgrade to Pro"
-            )
-        }
+        // if(!args.hasPro && args.themeColor && args.themeColor !== defaultColor){
+        //     throw new Error(
+        //         "Custom theme colors are a Pro features, Please upgrade to Pro"
+        //     )
+        // }
 
-        const themeColor = hasPro ? args.themeColor : defaultColor;
+        const themeColor =  args.themeColor 
 
         const slug = args.title.toLowerCase()
            .replace(/[^a-z0-9]+/g, "-")

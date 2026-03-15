@@ -23,6 +23,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { CATEGORIES } from '@/lib/data';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
+import AiEventCreator from './_components/ai-event-creator';
 
 // HH:MM in 24h
 const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
@@ -55,14 +56,13 @@ const CreateEvent = ()=>{
     const [upgradeReason , setUpgradeReason] = useState("limit") // "limit" or "color"
 
 
-    // Chcek if user has Pro plan
+    // Check if user has Pro plan
     const { has } = useAuth();
     const hasPro = has?.({plan:"pro"});
 
     const {data: currentUser} = useConvexQuery(api.users.getCurrentUser);
     const {mutate: createEvent , isLoading} = useConvexMutation(api.events.createEvent)
 
-    console.log("isLoading:", isLoading)
      
 
    const { register , handleSubmit, watch , setValue , control, formState:{ errors } }= useForm({
@@ -128,7 +128,6 @@ const CreateEvent = ()=>{
   };
 
   const onSubmit = async (data) => {
-    console.log("craete evnet", data)
     try {
       const start = combineDateTime(data.startDate, data.startTime);
       const end = combineDateTime(data.endDate, data.endTime);
@@ -185,6 +184,15 @@ const CreateEvent = ()=>{
     }
   };
 
+  const handleAIGenerate = (generatedData) =>{
+    setValue("title", generatedData.title);
+    setValue("description", generatedData.description);
+    setValue("category", generatedData.category);
+    setValue("capacity", generatedData.suggestedCapacity);
+    setValue("ticketType", generatedData.suggestedTicketType);
+    toast.success("Event details filled! Customize as needed. ")
+  }
+
 
     return (
         <div style={{backgroundColor: themeColor}} className='min-h-screen transition-colors duration-300 px-6 py-8 -mt-6 md:-mt-16 md:-mr-26 lg:rounded-md'>
@@ -199,6 +207,9 @@ const CreateEvent = ()=>{
                     }
                 </div>
                 {/* Ai Event Creator */}
+             <AiEventCreator onEventGenerated={handleAIGenerate}/>
+
+
             </div>
            <div className="max-w-6xl mx-auto grid md:grid-cols-[320px_1fr] gap-10">
         {/* LEFT: Image + Theme */}

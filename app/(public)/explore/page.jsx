@@ -55,8 +55,7 @@ export default function ExplorePage() {
   );
 
   const handleEventClick = (slug) => {
-    console.log("explore",slug )
-    router.push(`/explore/${slug}`);
+    router.push(`/events/${slug}`);
   };
 
   const handleCategoryClick = (categoryId) => {

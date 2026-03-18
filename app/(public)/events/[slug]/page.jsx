@@ -349,13 +349,11 @@ export default function EventDetailPage() {
       </div>
 
       {/* Register Modal */}
-      {showRegisterModal && (
-        <RegisterModal
-          event={event}
-          isOpen={showRegisterModal}
-          onClose={() => setShowRegisterModal(false)}
-        />
-      )}
+       <RegisterModal
+        event={event}
+        isOpen={showRegisterModal}
+        onClose={() => setShowRegisterModal(false)}
+      />
     </div>
   );
 }

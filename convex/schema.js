@@ -81,7 +81,7 @@ export default defineSchema({
   //! Registrations/Tickets
   registrations: defineTable({
     eventId: v.id("events"),
-    userId: v.id("users"),
+    userId: v.string(),
 
     // Attendee info
     attendeeName: v.string(),

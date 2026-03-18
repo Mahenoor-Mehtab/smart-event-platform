@@ -46,6 +46,7 @@ export const createEvent = mutation({
         // }
 
         const themeColor =  args.themeColor 
+        const identity = await ctx.auth.getUserIdentity();
 
         const slug = args.title.toLowerCase()
            .replace(/[^a-z0-9]+/g, "-")
@@ -55,7 +56,7 @@ export const createEvent = mutation({
             ...args,
             themeColor,
             slug:`${slug}-${Date.now()}`,
-            organizerId: user._id,
+           organizerId: identity.subject,
             organizerName: user.name,
             registrationCount: 0,
             createdAt: Date.now(),

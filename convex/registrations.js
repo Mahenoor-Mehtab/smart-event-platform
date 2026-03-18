@@ -25,8 +25,10 @@ export const registerForEvent = mutation({
             throw new Error("Event is full")
         }
 
+          const identity = await ctx.auth.getUserIdentity();
+
         const existingRegistration = await ctx.db.query("registrations")
-        .withIndex("by_event_user", (q)=> q.eq("eventId", args.eventId).eq("userId", user._id || ""))
+        .withIndex("by_event_user", (q)=> q.eq("eventId", args.eventId).eq("userId", identity.subject))
         .unique()
 
         if(existingRegistration){
@@ -36,7 +38,7 @@ export const registerForEvent = mutation({
         const qrCode = generateQRCode();
         const registrationId = await ctx.db.insert("registrations", {
             eventId: args.eventId,
-            userId: user._id,
+            userId: identity.subject,
             attendeeName: args.attendeeName,
             attendeeEmail: args.attendeeEmail,
             qrCode: qrCode,
@@ -57,13 +59,15 @@ export const registerForEvent = mutation({
 //! check user registered for that event or not 
 export const checkRegistration = query({
        args:{eventId : v.id("events")},
+       
        handler: async(ctx, args)=>{
          const user = await ctx.runQuery(internal.users.getCurrentUser)
+           const identity = await ctx.auth.getUserIdentity();
 
          const registration = await ctx.db
          .query("registrations")
          .withIndex("by_event_user", (q)=>
-        q.eq("eventId", args.eventId).eq("userId", user?.id))
+        q.eq("eventId", args.eventId).eq("userId", identity.subject))
          .unique()
 
          return registration;

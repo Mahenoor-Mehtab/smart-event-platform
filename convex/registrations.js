@@ -2,6 +2,7 @@ import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { internal } from "./_generated/api";
 import { success } from "zod";
+import { getCurrentUser } from "./users";
 
 const generateQRCode = ()=>{
     return `EVT-${Date.now()}-${Math.random().toString(36).substr(2,9).toUpperCase()}`
@@ -75,7 +76,7 @@ export const checkRegistration = query({
        }
 })
 
-//! fetch registrations detail
+//! fetch registrations detail: jis-jis event me ye user register hai, un sabka data mil raha hai
 export const getMyRegistrations = query({
     handler: async (ctx)=>{
         const user = await ctx.runQuery(internal.users.getCurrentUser);
@@ -133,5 +134,88 @@ export const cancelRegistration = mutation({
         }
 
         return  {success: true}
+    }
+})
+
+
+//!  Check-in user attendee
+export const checkedInAttendee = mutation({
+    args: { qrCode: v.string()},
+    handler: async (ctx , args)=>{
+        const user = await ctx.runQuery(internal.users,getCurrentUser);
+
+        const registration = await ctx.db
+        .query("registrations")
+        .withIndex("by_qr_code", (q)=> q.eq("qrCode", args.qrCode))
+        .unique();
+
+        if(!registration){
+            throw new Error ("Invalid QR code");
+        }
+
+        const event = await ctx.db.get(registration.eventId);
+        if(!event){
+            throw new Error("Event not found")
+        }
+
+         const identity = await ctx.auth.getUserIdentity();
+
+        // Check if user is the organizer
+        if(event.organizerId !== user._id){
+            throw new Error("You are not authorized to check in attendee");
+        }
+
+        // Check if already chceked in 
+        if(registration.checkedIn){
+            return {
+                success: false,
+                message: "Already Checcollked in",
+                registration
+            }
+        }
+
+        // Check in
+        await ctx.db.patch(registration._id,{
+            checkedIn: true,
+            checkedInAt: Date.now()
+        })
+
+        return {
+            success: true ,
+            message: "Check-in successful",
+            registration:{
+                ...registration,
+                checkedIn: true,
+                checkedInAt: Date.now()
+            }
+        }
+
+    }
+})
+
+//! event registration: ek event ke sab attendees ki list nikalna (organizer ke liye)
+export const getEventRegistrations = query({
+    args: { eventId : v.id("events")},
+    handler: async ( ctx, args)=>{
+        const user = await ctx.runQuery(internal.users.getCurrentUser);
+
+        const event = await ctx.db.get(args.eventId);
+        if(!event){
+            throw new Error("Event not found")
+        }
+
+        const identity = await ctx.auth.getUserIdentity();
+
+        // Check if user is the organizer
+        if(event.organizerId !== user._id){
+            throw new Error("You are not authorized to check in attendee");
+        }
+
+        const registrations = await ctx.db
+        .query("registrations")
+        .withIndex("by_event", (q)=> q.eq("eventId", args.eventId))
+        .collect();
+
+        return registrations;
     }
 })
